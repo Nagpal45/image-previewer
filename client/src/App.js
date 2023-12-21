@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/images")
+      .get("https://filterpixel-server.onrender.com/images")
       .then((response) => {
         setImages(response.data.images);
         setSelectedImage(response.data.images[0]);
@@ -42,7 +42,7 @@ function App() {
 
   const handleDownload = () => {
     axios
-      .get(`http://localhost:8000/download/${selectedImage?.file_name}`, {
+      .get(`https://filterpixel-server.onrender.com/download/${selectedImage?.file_name}`, {
         responseType: "blob",
       })
       .then((response) => {
@@ -75,7 +75,7 @@ function App() {
         <div className="imagesContainer">
           <p>Showing {images.length - 1} photos</p>
           <img
-            src={`http://localhost:8000/image-preview/${selectedImage?.file_name}`}
+            src={`https://filterpixel-server.onrender.com/image-preview/${selectedImage?.file_name}`}
             alt={selectedImage?.file_name}
             className={displayBottomBar ? "mainImage" : "mainImage full"}
           />
@@ -100,7 +100,7 @@ function App() {
                         : "barImage"
                     }
                     key={index}
-                    src={`http://localhost:8000/image-preview/${image.file_name}`}
+                    src={`https://filterpixel-server.onrender.com/image-preview/${image.file_name}`}
                     alt={image.file_name}
                     onClick={() => handleImageSelect(image)}
                   />
