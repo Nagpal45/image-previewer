@@ -4,13 +4,20 @@ import "./App.css";
 
 function App() {
   const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState();
 
   useEffect(() => {
     axios.get('http://localhost:8000/images')
-    .then(response => setImages(response.data))
+    .then(response => {setImages(response.data.images)
+    setSelectedImage(response.data.images[0])}
+    )
     .catch(error => console.error('Error fetching images:', error));
 }, []);
-console.log(images);
+
+const handleImageSelect = (image) => {
+  setSelectedImage(image);
+  console.log(selectedImage);
+}
 
   return (
     <div className="App">
@@ -20,25 +27,26 @@ console.log(images);
       </div>
       <div className="center">
         <div className="imagesContainer">
-          <p>Showing 20 photos</p>
+          <p>Showing {images.length-1} photos</p>
           <img
-            src="https://images.unsplash.com/photo-1701730282717-f6478c8f2186?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="1"
+            src={`http://localhost:8000/image-preview/${selectedImage?.file_name}`}
+            alt={selectedImage?.file_name}
           />
           <div className="bottomBar">
             <div className="infoContainer">
-              <p>200/200 in-view</p>
-              <p>1 Selected/Vaibhav.jpg</p>
+              <p>8/15 in-view</p>
+              <p>1 Selected/{selectedImage?.file_name }</p>
               <p>Arrow</p>
             </div>
             <div className="images">
-              {
-                Array(10).fill().map((_, index) => (
-          <img key={index} src={
-            "https://images.unsplash.com/photo-1701730282717-f6478c8f2186?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          } alt=""/>
-        ))
-              }
+            {images.map((image, index) => (
+              <img
+                key={index}
+                src={`http://localhost:8000/image-preview/${image.file_name}`}
+                alt={image.file_name}
+                onClick={() => handleImageSelect(image)}
+              />
+            ))}
             </div>
           </div>
         </div>
@@ -50,7 +58,10 @@ console.log(images);
           <div className="details">
             <div className="detail">
               <p className="detailTitle">Lens</p>
-              <p className="detailValue">1</p>
+              <p className="detailValue">{
+                selectedImage?.exif_info["EXIF LensModel"]
+              }
+              </p>
             </div>
             <div className="detail">
               <p className="detailTitle">Lens AF</p>

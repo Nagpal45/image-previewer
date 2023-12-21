@@ -54,9 +54,9 @@
 }
 
 .imagesContainer > img{
-    height: 72%;
+    height: 69%;
     width: 98%;
-    object-fit: cover;
+    object-fit: contain;
     align-self: center;
 }
 
@@ -88,21 +88,22 @@
     margin-top: 1vw;
     color: white;
     font-size: 0.95vw;
-    margin-bottom: 0.9vw;
+    margin-bottom: 1.8vw;
 }
 
 .images{
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
    width: 100%;
    height: 100%;
+   overflow-x: scroll;
 }
 
 .images > img{
     width: 12%;
-    height: 75%;
+    height: 100%;
     margin-left: 0.5vw;
     margin-right: 0.5vw;
     opacity: 0.5;
