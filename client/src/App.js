@@ -17,7 +17,7 @@ function App() {
         setTimeout(() => {
           setLoading(false);
         }
-        , 2000)
+        , 5000)
       })
       .catch((error) => console.error("Error fetching images:", error));
   }, []);
