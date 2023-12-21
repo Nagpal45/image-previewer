@@ -24,7 +24,16 @@ function App() {
 
   const handleImageSelect = (image) => {
     setSelectedImage(image);
-    console.log(selectedImage);
+    
+    const selectedImageElement = document.getElementById(`image-${image.file_name}`);
+
+  if (selectedImageElement) {
+    selectedImageElement.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }
   };
 
   const handleBottomBar = () => {
@@ -84,6 +93,7 @@ function App() {
               <div className="images">
                 {images.map((image, index) => (
                   <img
+                  id={`image-${image.file_name}`}
                     className={
                       selectedImage?.file_name === image.file_name
                         ? "selectedImage barImage"
