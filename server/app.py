@@ -6,7 +6,7 @@ from flask_cors import CORS
 import rawpy
 
 app = Flask(__name__)
-CORS = CORS(app, resources={r"/images": {"origins": "http://localhost:3000"}})
+CORS(app)
 IMAGE_DIR = 'images'
 
 def process_image(file_path):
@@ -70,6 +70,11 @@ def get_image_preview(filename):
         create_preview(file_path, preview_path)
 
     return send_file(preview_path, mimetype='image/jpeg')
+
+@app.route('/download/<filename>')
+def download_image(filename):
+    file_path = os.path.join(IMAGE_DIR, filename)
+    return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

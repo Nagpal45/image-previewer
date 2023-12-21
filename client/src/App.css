@@ -7,12 +7,40 @@
 .App{
     display: flex;
     flex-direction: column;
-    height: 125vh;
+    height: 140vh;
     width: 100%;
     background-color: black;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     overflow: hidden;
 }
+
+.loadingContainer{
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.3); 
+    border-top: 4px solid #34e0a1; 
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite; 
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 .topbar{
     height: 3vw;
@@ -47,15 +75,21 @@
 .imagesContainer{
     display: flex;
     align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: space-between;
     flex-direction: column;
     height: 100%;
     flex: 3.2;
 }
 
-.imagesContainer > img{
-    height: 69%;
+.mainImage{
+    height: 48vw;
     width: 98%;
+    object-fit: contain;
+    align-self: center;
+}
+
+.full{
+    height: 55vw;
     object-fit: contain;
     align-self: center;
 }
@@ -79,6 +113,11 @@
     height: 12vw;
 }
 
+.hidden{
+    height: 4vw;
+}
+
+
 .infoContainer{
     width: 95%;
     display: flex;
@@ -91,6 +130,22 @@
     margin-bottom: 1.8vw;
 }
 
+.displayinfoContainer{
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    font-size: 0.95vw;
+}
+
+.infoContainer > img, .displayinfoContainer > img{
+    width: 1.5vw;
+    height: 1.5vw;
+    cursor: pointer;
+}
+
 .images{
     display: flex;
     flex-direction: row;
@@ -101,24 +156,37 @@
    overflow-x: scroll;
 }
 
-.images > img{
+.barImage{
     width: 12%;
-    height: 100%;
+    height: 90%;
     margin-left: 0.5vw;
     margin-right: 0.5vw;
-    opacity: 0.5;
+    opacity: 0.4;
+}
+
+.selectedImage{
+    opacity: 1;
+    border: 0.2vw solid white;
 }
 
 .rightBar{
     display: flex;
     flex-direction: column;
-    align-self: center;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
     flex: 1;
     height: 100%;
     background-color:#2E2E2E;
     font-weight: 500;
     z-index: 1;
+}
+
+.top{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .line{
@@ -132,14 +200,14 @@
     color: white;
     margin-top: 2vw;
     font-size: 1.05vw;
-    margin-left: 2vw;
+    margin-left: 4vw;
     margin-bottom: 1.2vw;
     width: 100%;
 }
 
 .details{
     color: white;
-    margin-left: 2.4vw;
+    margin-left: 4.5vw;
     font-size: 1vw;
     margin-bottom: 0.5vw;
     display: flex;
@@ -156,7 +224,13 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 80%;
+    width: 85%;
+}
+
+.detailValue{
+    font-size: 0.8vw;
+    font-weight: 400;
+    width: 50%;
 }
 
 .downloadContainer{
@@ -169,7 +243,6 @@
 .downloadContainer{
     height: 5.5vw;
     background-color:#444444;
-    margin-top: 12vw;
 }
 
 .downloadButton{
@@ -178,9 +251,14 @@
     height: 55%;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     border-radius: 0.5vw;
+    cursor: pointer;
+}
+
+.downloadButton:hover{
+    background-color: #2E8C9C;
 }
 
 .downloadButton > p{
@@ -188,3 +266,10 @@
     margin-left: 1.2vw;
     color: white;
 }
+
+.downloadButton > img{
+    width: 1.4vw;
+    height: 1.4vw;
+    margin-right: 1.2vw;
+}
+

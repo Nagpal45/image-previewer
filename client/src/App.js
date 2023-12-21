@@ -5,112 +5,249 @@ import "./App.css";
 function App() {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState();
+  const [displayBottomBar, setDisplayBottomBar] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/images')
-    .then(response => {setImages(response.data.images)
-    setSelectedImage(response.data.images[0])}
-    )
-    .catch(error => console.error('Error fetching images:', error));
-}, []);
+    axios
+      .get("http://localhost:8000/images")
+      .then((response) => {
+        setImages(response.data.images);
+        setSelectedImage(response.data.images[0]);
+        setTimeout(() => {
+          setLoading(false);
+        }
+        , 2000)
+      })
+      .catch((error) => console.error("Error fetching images:", error));
+  }, []);
 
-const handleImageSelect = (image) => {
-  setSelectedImage(image);
-  console.log(selectedImage);
-}
+  const handleImageSelect = (image) => {
+    setSelectedImage(image);
+    console.log(selectedImage);
+  };
+
+  const handleBottomBar = () => {
+    setDisplayBottomBar(!displayBottomBar);
+  };
+
+  const handleDownload = () => {
+    axios
+      .get(`http://localhost:8000/download/${selectedImage?.file_name}`, {
+        responseType: "blob",
+      })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        const fileName = selectedImage?.file_name;
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((error) => console.error("Error downloading image:", error));
+  };
 
   return (
     <div className="App">
+      {loading && (
+        <div className="loadingContainer">
+      <div className="loading">
+        <div className="loading-spinner">
+        </div>
+      </div>
+    </div>
+      )}
       <div className="topbar">
         <img src="/images/fpLogo.svg" alt="logo" />
         <p>Welcome</p>
       </div>
       <div className="center">
         <div className="imagesContainer">
-          <p>Showing {images.length-1} photos</p>
+          <p>Showing {images.length - 1} photos</p>
           <img
             src={`http://localhost:8000/image-preview/${selectedImage?.file_name}`}
             alt={selectedImage?.file_name}
+            className={displayBottomBar ? "mainImage" : "mainImage full"}
           />
-          <div className="bottomBar">
-            <div className="infoContainer">
-              <p>8/15 in-view</p>
-              <p>1 Selected/{selectedImage?.file_name }</p>
-              <p>Arrow</p>
+          {displayBottomBar ? (
+            <div className="bottomBar">
+              <div className="infoContainer">
+                <p>9/15 in-view</p>
+                <p>1 Selected/{selectedImage?.file_name}</p>
+                <img
+                  src="/images/down-arrow.png"
+                  alt="left"
+                  onClick={handleBottomBar}
+                />
+              </div>
+              <div className="images">
+                {images.map((image, index) => (
+                  <img
+                    className={
+                      selectedImage?.file_name === image.file_name
+                        ? "selectedImage barImage"
+                        : "barImage"
+                    }
+                    key={index}
+                    src={`http://localhost:8000/image-preview/${image.file_name}`}
+                    alt={image.file_name}
+                    onClick={() => handleImageSelect(image)}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="images">
-            {images.map((image, index) => (
-              <img
-                key={index}
-                src={`http://localhost:8000/image-preview/${image.file_name}`}
-                alt={image.file_name}
-                onClick={() => handleImageSelect(image)}
-              />
-            ))}
+          ) : (
+            <div className="bottomBar hidden">
+              <div className="infoContainer">
+                <p>8/15 in-view</p>
+                <p>1 Selected/{selectedImage?.file_name}</p>
+                <img
+                  src="/images/up-arrow.png"
+                  alt="left"
+                  onClick={handleBottomBar}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div className="rightBar">
-          <div className="line"></div>
-          <div className="detailHead">
-            <p>About Image</p>
-          </div>
-          <div className="details">
-            <div className="detail">
-              <p className="detailTitle">Lens</p>
-              <p className="detailValue">{
-                selectedImage?.exif_info["EXIF LensModel"]
-              }
-              </p>
+          <div className="top">
+            <div className="line"></div>
+            <div className="detailHead">
+              <p>About Image</p>
             </div>
-            <div className="detail">
-              <p className="detailTitle">Lens AF</p>
-              <p className="detailValue">2</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">Capture Time</p>
-              <p className="detailValue">3</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">ISO</p>
-              <p className="detailValue">4</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">Speed</p>
-              <p className="detailValue">5</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">Aperature</p>
-              <p className="detailValue">6</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">FileName</p>
-              <p className="detailValue">7</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">ImageSize</p>
-              <p className="detailValue">8</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">WhiteBalance</p>
-              <p className="detailValue">9</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">Rating</p>
-              <p className="detailValue">10</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">Colour</p>
-              <p className="detailValue">11</p>
-            </div>
-            <div className="detail">
-              <p className="detailTitle">Camera</p>
-              <p className="detailValue">12</p>
+            <div className="details">
+              <div className="detail">
+                <p className="detailTitle">Lens</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["EXIF LensModel"]
+                    ? selectedImage?.exif_info["EXIF LensModel"]
+                    : selectedImage?.exif_info["MakerNote LensType"]
+                    ? selectedImage?.exif_info["MakerNote LensType"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">Lens AF</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["MakerNote FocusMode"]
+                    ? selectedImage?.exif_info["MakerNote FocusMode"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">Capture Time</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["Image DateTime"]
+                    ? selectedImage?.exif_info["Image DateTime"]
+                    : selectedImage?.exif_info["MakerNote DateTimeOriginal"]
+                    ? selectedImage?.exif_info["MakerNote DateTimeOriginal"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">ISO</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["MakerNote ISOInfo"]
+                    ? selectedImage?.exif_info["MakerNote ISOInfo"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">SpeedRating</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["EXIF ISOSpeedRatings"]
+                    ? selectedImage?.exif_info["EXIF ISOSpeedRatings"]
+                    : selectedImage?.exif_info["MakerNote ISOInfo"]
+                    ? selectedImage?.exif_info["MakerNote ISOInfo"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">Aperature</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info[
+                    "MakerNote LensMinMaxFocalMaxAperture"
+                  ]
+                    ? selectedImage?.exif_info[
+                        "MakerNote LensMinMaxFocalMaxAperture"
+                      ]
+                    : selectedImage?.exif_info["EXIF ApertureValue"]
+                    ? selectedImage?.exif_info["EXIF ApertureValue"]
+                    : selectedImage?.exif_info["EXIF MaxApertureValue"]
+                    ? selectedImage?.exif_info["EXIF MaxApertureValue"]
+                    : selectedImage?.exif_info["Image MaxApertureValue"]
+                    ? selectedImage?.exif_info["Image MaxApertureValue"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">FileName</p>
+                <p className="detailValue">
+                  {selectedImage?.file_name
+                    ? selectedImage?.file_name
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">ImageSize</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["Image ImageWidth"]
+                    ? selectedImage?.exif_info["Image ImageWidth"]
+                    : selectedImage?.exif_info["EXIF ExifImageWidth"]
+                    ? selectedImage?.exif_info["EXIF ExifImageWidth"]
+                    : "Not Available"}
+                  x
+                  {selectedImage?.exif_info["Image ImageLength"]
+                    ? selectedImage?.exif_info["Image ImageLength"]
+                    : selectedImage?.exif_info["EXIF ExifImageLength"]}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">WhiteBalance</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["EXIF WhiteBalance"]
+                    ? selectedImage?.exif_info["EXIF WhiteBalance"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">Flash</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["EXIF Flash"]
+                    ? selectedImage?.exif_info["EXIF Flash"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">Copyright</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["Image Copyright"]
+                    ? selectedImage?.exif_info["Image Copyright"]
+                    : selectedImage?.exif_info["Image Tag 0xC6FE"]
+                    ? selectedImage?.exif_info["Image Tag 0xC6FE"]
+                    : "Not Available"}
+                </p>
+              </div>
+              <div className="detail">
+                <p className="detailTitle">Camera</p>
+                <p className="detailValue">
+                  {selectedImage?.exif_info["Image Make"] +
+                  " " +
+                  selectedImage?.exif_info["Image Model"]
+                    ? selectedImage?.exif_info["Image Make"] +
+                      " " +
+                      selectedImage?.exif_info["Image Model"]
+                    : "Not Available"}
+                </p>
+              </div>
             </div>
           </div>
           <div className="downloadContainer">
-            <div className="downloadButton">
+            <div className="downloadButton" onClick={handleDownload}>
               <p>Download</p>
+              <img src="/images/right-arrow.png" alt="download" />
             </div>
           </div>
         </div>
